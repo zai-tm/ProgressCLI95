@@ -2,7 +2,7 @@
 
 Progressbar95 but in a terminal. What else did you expect? Made by BurningInfern0. 
 
-*Now with save files!*
+~~*Now with save files!*~~
 
 Current Version: **0.2.2**
 
@@ -10,11 +10,11 @@ Current Version: **0.2.2**
 
 ## Installation
 
-Built on Python 3.
+Built on ~~Python 3~~ node.js.
 
 Dependencies: ```rich```
 
 1. Download the zip file and extract.
 2. Open your terminal/command prompt inside the extracted contents.
-3. Make sure the depenencies have been met.
-4. Simply do ```python boot.py```
+3. ~~Make sure the depenencies have been met.~~ run `npm i`
+4. Simply do ~~```python boot.py```~~ `node index.js`
