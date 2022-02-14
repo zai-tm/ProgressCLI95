@@ -1,5 +1,1 @@
-.vscode
-.vs
-__pycache__
-oses\__pycache__
-save.pcsf
+node_modules/
