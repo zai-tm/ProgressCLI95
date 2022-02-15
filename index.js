@@ -1,8 +1,5 @@
 var readline = require('readline'),
     menu;
-const {
-    blue
-} = require('cli-color');
 var clc = require('cli-color');
 const wait = require('util').promisify(setTimeout);
 var orange = clc.xterm(214);
@@ -14,6 +11,8 @@ const segments = [
 ]
 var randomsegment = segments[Math.floor(Math.random() * segments.length)];
 var progress = 0
+var level = 1;
+var lives = 3;
 //TODO: comment the code
 //sike you thought
 function showBoot() {
@@ -52,7 +51,11 @@ async function bootPb95() {
 
 function pb95() {
     process.stdout.write('\033c');
-    console.log(clc.white('╔════════════════╗\n║   Begin Menu   ║\n║   1. New Game  ║\n║   2. Restart   ║\n║   3. Shutdown  ║\n╚════════════════╝\n'))
+    if (level == 1) {
+        console.log(clc.white('╔════════════════╗\n║   Begin Menu   ║\n║   1. New Game  ║\n║   2. Restart   ║\n║   3. Shutdown  ║\n╚════════════════╝\n'))
+    } else {
+        console.log(clc.white('╔════════════════╗\n║   Begin Menu   ║\n║   1. Load save ║\n║   2. Restart   ║\n║   3. Shutdown  ║\n╚════════════════╝\n'))
+    }
     if (menu) menu.close();
 
     menu = readline.createInterface({
@@ -64,6 +67,7 @@ function pb95() {
     menu.question('> ', function (input) {
         switch (input) {
             case '1':
+                progress = 0;
                 gameLoop();
                 break;
             case '2':
@@ -79,16 +83,15 @@ function pb95() {
 }
 
 function gameLoop() {
-
     randomsegment = segments[Math.floor(Math.random() * segments.length)];
     process.stdout.write('\033c');
-    console.log(`${randomsegment}\n${progress}%`);
+    console.log(`Level ${level}\n${lives} lives left\n${randomsegment}\n${progress}%`);
     if (menu) menu.close();
     menu = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
-    menu.question('c - catch, anything else - shy away, q - quit\n ', async function (input) {
+    menu.question('c - catch, anything else - shy away, q - quit\n', async function (input) {
         switch (input) {
             case 'c':
                 switch (randomsegment) {
@@ -101,10 +104,24 @@ function gameLoop() {
                         gameLoop();
                         break;
                     case 'red':
+                        lives -= 1;
+                        if (lives > 1) {
+                            gameLoop();
+                        } else if (lives == 1) {
+                            if (level == 1) {
+                                gameLoop();
+                            } else {
+                                level -= 1
+                                lives = 3;
+                                pb95();
+                            }
+                        } else {
+                            pb95();
+                        }
                         process.stdout.write('\033c');
                         console.log('Game Over!');
+                        progress = 0;
                         await wait(1000);
-                        pb95();
                         break;
                     case 'pink':
                         progress -= 5;
@@ -112,6 +129,7 @@ function gameLoop() {
                         break;
                 }
                 if (progress == 100) {
+                    level += 1;
                     process.stdout.write('\033c');
                     console.log('You Win!');
                     await wait(1000);
