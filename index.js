@@ -4,10 +4,10 @@ var clc = require('cli-color');
 const wait = require('util').promisify(setTimeout);
 var orange = clc.xterm(214);
 const segments = [
-    'blue',
-    'yellow',
-    'red',
-    'pink'
+    clc.blue('█'),
+    clc.yellowBright('█'),
+    clc.redBright('█'),
+    clc.magentaBright('█'),
 ]
 var randomsegment = segments[Math.floor(Math.random() * segments.length)];
 var progress = 0
@@ -95,15 +95,15 @@ function gameLoop() {
         switch (input) {
             case 'c':
                 switch (randomsegment) {
-                    case 'blue':
+                    case clc.blue('█'):
                         progress += 5;
                         gameLoop();
                         break;
-                    case 'yellow':
+                    case clc.yellowBright('█'):
                         progress += 5;
                         gameLoop();
                         break;
-                    case 'red':
+                    case clc.redBright('█'):
                         lives -= 1;
                         if (lives > 1) {
                             gameLoop();
@@ -123,7 +123,7 @@ function gameLoop() {
                         progress = 0;
                         await wait(1000);
                         break;
-                    case 'pink':
+                    case clc.magentaBright('█'):
                         progress -= 5;
                         gameLoop();
                         break;
