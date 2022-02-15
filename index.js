@@ -1,8 +1,10 @@
 var readline = require('readline'),
     menu;
+const ejs = require('edit-json-file')
 var clc = require('cli-color');
 const wait = require('util').promisify(setTimeout);
 var orange = clc.xterm(214);
+const fs = require('fs');
 const segments = [
     clc.blue('█'),
     clc.yellowBright('█'),
@@ -11,13 +13,44 @@ const segments = [
 ]
 var randomsegment = segments[Math.floor(Math.random() * segments.length)];
 var progress = 0
-var level = 1;
+var level95 = 1;
 var lives = 3;
+var progressArray = [];
+let saveFile = ejs(`./save.json`);
+
 //TODO: comment the code
 //sike you thought
-function showBoot() {
+function noSave() {
     process.stdout.write('\033c');
-    console.log(clc.blackBright(`ZBIOS VERSION 0.0.1\nWELCOME\n\n${clc.whiteBright('1. ')}${clc.white('PROGRESSBAR 95')}\n\nTYPE EXIT TO EXIT\n`));
+    console.log(clc.whiteBright('Create save? (Y/N)'))
+    if (menu) menu.close();
+    menu = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    menu.question('> ', function (input) {
+        switch (input) {
+            case 'y':
+                fs.writeFileSync('save.json', JSON.stringify({
+                    level95: 1,
+                }));
+                showBoot();
+                break;
+            case 'n':
+                showBoot();
+                break;
+            default:
+                noSave();
+        }
+    });
+
+}
+
+function showBoot() {
+    let save = require('./save.json');
+    level95 = save.level95;
+    process.stdout.write('\033c');
+    console.log(clc.blackBright(`ZBIOS VERSION 0.0.5\nWELCOME\n\n${clc.whiteBright('1. ')}${clc.white('PROGRESSBAR 95')}\n\nTYPE EXIT TO EXIT\n`));
     if (menu) menu.close();
     menu = readline.createInterface({
         input: process.stdin,
@@ -51,7 +84,7 @@ async function bootPb95() {
 
 function pb95() {
     process.stdout.write('\033c');
-    if (level == 1) {
+    if (level95 == 1) {
         console.log(clc.white('╔════════════════╗\n║   Begin Menu   ║\n║   1. New Game  ║\n║   2. Restart   ║\n║   3. Shutdown  ║\n╚════════════════╝\n'))
     } else {
         console.log(clc.white('╔════════════════╗\n║   Begin Menu   ║\n║   1. Load save ║\n║   2. Restart   ║\n║   3. Shutdown  ║\n╚════════════════╝\n'))
@@ -68,6 +101,7 @@ function pb95() {
         switch (input) {
             case '1':
                 progress = 0;
+                progressArray.length = 0;
                 gameLoop();
                 break;
             case '2':
@@ -83,9 +117,10 @@ function pb95() {
 }
 
 function gameLoop() {
+    let save = require('./save.json');
     randomsegment = segments[Math.floor(Math.random() * segments.length)];
     process.stdout.write('\033c');
-    console.log(`Level ${level}\n${lives} lives left\n${randomsegment}\n${progress}%`);
+    console.log(`Level ${saveFile.get("level95")}\n${lives} lives left\n${randomsegment}\n${progress}%\n${progressArray.join('')}\n\n`);
     if (menu) menu.close();
     menu = readline.createInterface({
         input: process.stdin,
@@ -97,10 +132,12 @@ function gameLoop() {
                 switch (randomsegment) {
                     case clc.blue('█'):
                         progress += 5;
+                        progressArray.push(clc.blue('█'));
                         gameLoop();
                         break;
                     case clc.yellowBright('█'):
                         progress += 5;
+                        progressArray.push(clc.yellowBright('█'));
                         gameLoop();
                         break;
                     case clc.redBright('█'):
@@ -108,11 +145,13 @@ function gameLoop() {
                         if (lives > 0) {
                             gameLoop();
                         } else if (lives == 0) {
-                            if (level == 1) {
+                            if (level95 == 1) {
                                 lives = 3;
                                 gameLoop();
                             } else {
-                                level -= 1
+                                level95 -= 1
+                                saveFile.set('level95', level95);
+                                saveFile.save();
                                 lives = 3;
                                 pb95();
                             }
@@ -125,12 +164,19 @@ function gameLoop() {
                         await wait(1000);
                         break;
                     case clc.magentaBright('█'):
-                        progress -= 5;
+                        if (progress != 0) {
+                            progress -= 5;
+                            progressArray.pop();
+                        } else {
+                            progress = 0;
+                        } 
                         gameLoop();
                         break;
                 }
                 if (progress == 100) {
-                    level += 1;
+                    level95 += 1;
+                    saveFile.set('level95', level95);
+                    saveFile.save();
                     process.stdout.write('\033c');
                     console.log('You Win!');
                     await wait(1000);
@@ -149,4 +195,8 @@ function gameLoop() {
 
 }
 
-showBoot();
+if (fs.existsSync('./save.json')) {
+    showBoot();
+} else {
+    noSave();
+}
