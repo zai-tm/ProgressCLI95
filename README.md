@@ -1,12 +1,14 @@
 # ProgressCLI95
 
-Progressbar95 but in a terminal. What else did you expect? Made by BurningInfern0. 
+Progressbar95 but in a terminal. What else did you expect? Made by BurningInfern0 in Python.
+
+and then i rewrote it in js lol
+
+Basically, there are no features right now. (What did you expect? A full game 2 days in?) But, the game is playable!
 
 ~~*Now with save files!*~~
 
-Current Version: **0.2.2**
 
-**PLEASE NOTE: I have overlooked a few issues and some visual bugs are present, such as numbers being bold and a different color, and the green segment appearing at the same time as another segment. These issues will be fixed soon and 0.2.2a will be published.**
 
 ## Installation
 
