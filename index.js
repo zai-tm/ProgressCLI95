@@ -46,7 +46,7 @@ function pb95() {
 
     menu.question('> ', function(input) {
         switch(input) {
-            case '1': console.log('THERE IS NO GAME YET.');pb95(); break;
+            case '1': console.log('THERE IS NO GAME YET.');process.exit(); break;
             case '2': showBoot(); break;
             case '3': process.exit(); break;
             default: pb95() ;
