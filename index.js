@@ -105,10 +105,11 @@ function gameLoop() {
                         break;
                     case clc.redBright('█'):
                         lives -= 1;
-                        if (lives > 1) {
+                        if (lives > 0) {
                             gameLoop();
-                        } else if (lives == 1) {
+                        } else if (lives == 0) {
                             if (level == 1) {
+                                lives = 3;
                                 gameLoop();
                             } else {
                                 level -= 1
