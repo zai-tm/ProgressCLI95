@@ -168,6 +168,7 @@ function gameLoop() {
                         process.stdout.write('\033c');
                         console.log('Game Over!');
                         progress = 0;
+                        progressArray.length = 0;
                         await wait(1000);
                         gameLoop();
                         break;
