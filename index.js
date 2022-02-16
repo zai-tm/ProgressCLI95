@@ -10,6 +10,9 @@ const segments = [
     clc.yellowBright('█'),
     clc.redBright('█'),
     clc.magentaBright('█'),
+    clc.cyanBright('█')+clc.whiteBright(' 2x'),
+    clc.cyanBright('█')+clc.whiteBright(' 3x'),
+    clc.blackBright('█'),
 ]
 var randomsegment = segments[Math.floor(Math.random() * segments.length)];
 var progress = 0
@@ -119,6 +122,10 @@ function pb95() {
 function gameLoop() {
     let save = require('./save.json');
     randomsegment = segments[Math.floor(Math.random() * segments.length)];
+    var greenSegmentChance = Math.floor(Math.random() * 100);
+    if (greenSegmentChance == 0) {
+        randomsegment = clc.greenBright('█');
+    }
     process.stdout.write('\033c');
     console.log(`Level ${saveFile.get("level95")}\n${lives} lives left\n${randomsegment}\n${progress}%\n${progressArray.join('')}\n\n`);
     if (menu) menu.close();
@@ -162,6 +169,7 @@ function gameLoop() {
                         console.log('Game Over!');
                         progress = 0;
                         await wait(1000);
+                        gameLoop();
                         break;
                     case clc.magentaBright('█'):
                         if (progress != 0) {
@@ -172,8 +180,28 @@ function gameLoop() {
                         } 
                         gameLoop();
                         break;
+                    case clc.cyanBright('█')+clc.whiteBright(' 2x'):
+                        progress += 10;
+                        for (let i = 0; i < 2; i++) {
+                            progressArray.push(clc.blue('█'));
+                        }
+                        gameLoop();
+                        break;
+                    case clc.cyanBright('█')+clc.whiteBright(' 3x'):
+                        progress += 15;
+                        for (let i = 0; i < 3; i++) {
+                            progressArray.push(clc.blue('█'));
+                        }
+                        gameLoop();
+                        break;
+                    case clc.blackBright('█'):
+                        gameLoop();
+                        break;
+                    case clc.greenBright('█'):
+                        progress = 100;
+                        break;
                 }
-                if (progress == 100) {
+                if (progress >= 100) {
                     level95 += 1;
                     saveFile.set('level95', level95);
                     saveFile.save();
